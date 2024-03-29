@@ -1,0 +1,65 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+
+    //search and delete a key
+    <script>
+        function deleteUser(id) {
+            fetch('/delete-user/' + id, { //can send a request to backend
+                method: 'DELETE'
+            }).then(() => {
+                window.location.reload(); //delete and reloads the page.so can see the deletion at live time
+            })
+        }
+    </script>
+
+</head> -->
+
+<body>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">First</th>
+                <th scope="col">Last</th>
+                <th scope="col">email</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <% users.forEach(user=> { %>
+                <tr>
+                    <td>
+                        <%= user.firstName %>
+                    </td>
+                    <td>
+                        <%= user.lastName %>
+                    </td>
+                    <td>
+                        <%= user.email %>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" onclick="deleteUser('<%= user._id %>')">Delete</button>
+                    </td>
+                </tr>
+                <% }) %>
+
+        </tbody>
+    </table>
+    <script>
+        function deleteUser(id) {
+            fetch('/delete-user/' + id, { //can send a request to backend
+                method: 'DELETE'
+            }).then(() => {
+                window.location.reload(); //delete and reloads the page.so can see the deletion at live time
+            })
+        }
+    </script>
+</body>
+
+</html>
