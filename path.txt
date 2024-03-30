@@ -83,6 +83,144 @@ app.delete('/todos/:id', async (req, res) => {
 
 // Step 7: Start the Server
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+================================================================================
+const express = require('express');
+const app = express();
+const port = 3000;
+const bodyParser = require('body-parser');
+const methodOverride = require('method-override');
+
+// Set EJS as the view engine
+app.set('view engine', 'ejs');
+
+// Middleware
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(methodOverride('_method'));
+
+// Temporary in-memory data store
+let items = [
+    { id: 1, name: 'Item 1' },
+    { id: 2, name: 'Item 2' },
+    { id: 3, name: 'Item 3' }
+];
+
+// Routes
+// Read - Display all items
+app.get('/', (req, res) => {
+    res.render('index', { items });
+});
+
+// Create - Display form to add new item
+app.get('/items/new', (req, res) => {
+    res.render('new');
+});
+
+// Create - Add new item
+app.post('/items', (req, res) => {
+    const newItem = {
+        id: items.length + 1,
+        name: req.body.name
+    };
+    items.push(newItem);
+    res.redirect('/');
+});
+
+// Update - Display form to edit item
+app.get('/items/:id/edit', (req, res) => {
+    const id = parseInt(req.params.id);
+    const item = items.find(item => item.id === id);
+    res.render('edit', { item });
+});
+
+// Update - Update item
+app.put('/items/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const item = items.find(item => item.id === id);
+    item.name = req.body.name;
+    res.redirect('/');
+});
+
+// Delete - Delete item
+app.delete('/items/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    items = items.filter(item => item.id !== id);
+    res.redirect('/');
+});
+
+// Start the server
+app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
+});
+Now, let's create the corresponding EJS views:
+
+Create a file named index.ejs inside the views directory with the following content:
+html
+Copy code
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD App</title>
+</head>
+<body>
+    <h1>Items</h1>
+    <ul>
+        <% items.forEach(item => { %>
+            <li><%= item.name %> - <a href="/items/<%= item.id %>/edit">Edit</a> | 
+                <form action="/items/<%= item.id %>?_method=DELETE" method="POST" style="display: inline;">
+                    <button type="submit">Delete</button>
+                </form>
+            </li>
+        <% }); %>
+    </ul>
+    <a href="/items/new">Add New Item</a>
+</body>
+</html>
+Create a file named new.ejs inside the views directory with the following content:
+html
+Copy code
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Item</title>
+</head>
+<body>
+    <h1>New Item</h1>
+    <form action="/items" method="POST">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        <button type="submit">Create</button>
+    </form>
+</body>
+</html>
+Create a file named edit.ejs inside the views directory with the following content:
+html
+Copy code
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Item</title>
+</head>
+<body>
+    <h1>Edit Item</h1>
+    <form action="/items/<%= item.id %>?_method=PUT" method="POST">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" value="<%= item.name %>" required>
+        <button type="submit">Update</button>
+    </form>
+</body>
+</html>
+Now, when you run your Node.js application (node app.js) and navigate to http://localhost:3000, you should see a list of items with options to edit or delete them. You can also add new items by visiting http://localhost:3000/items/new.
+
+
+
+
+
 
 
 
