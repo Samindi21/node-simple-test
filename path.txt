@@ -1,0 +1,84 @@
+1) open folder -> terminal -> npm init -y -> create package.json
+2) create new index.js for server
+3) npm i express ejs mongoose => install express ejs and db things
+4) node index.js
+5) npm i nodemon -> nodemon index.js -> localhost:3000
+6) make views folder
+7) in index.js put-> app.set('view engine','ejs');
+8) views -> index.ejs (Like home page), add.ejs,layout.ejs,
+9) views-> partials/common -> header.ejs(common things)
+10) install springboot layout
+    npm install express-ejs-layouts
+11) put springboot link in index.ejs & layout.ejs
+12) install ejs language support library
+
+db.js
+controller.js
+Schema folder -> user.js
+
+get->
+how to make a CRUD operations connect with mongodb in nodejs step by step guidance
+
+blog.logrocket.com
+stack overflow
+
+// Step 1: Set Up Your Project
+const express = require('express');
+const mongoose = require('mongoose');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Step 3: Connect to MongoDB Atlas
+mongoose.connect('YOUR_MONGODB_CONNECTION_STRING', { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('Failed to connect to MongoDB', err));
+
+// Step 4: Create a Mongoose Schema
+const todoSchema = new mongoose.Schema({
+    title: String,
+    description: String,
+    completed: Boolean
+});
+
+const Todo = mongoose.model('Todo', todoSchema);
+
+// Step 5: Set Up Express Routes
+app.use(express.json());
+
+// Create a new todo
+app.post('/todos', async (req, res) => {
+    const todo = new Todo(req.body);
+    await todo.save();
+    res.json(todo);
+});
+
+// Read all todos
+app.get('/todos', async (req, res) => {
+    const todos = await Todo.find();
+    res.json(todos);
+});
+
+// Read a single todo by ID
+app.get('/todos/:id', async (req, res) => {
+    const todo = await Todo.findById(req.params.id);
+    res.json(todo);
+});
+
+// Update a todo by ID
+app.put('/todos/:id', async (req, res) => {
+    const todo = await Todo.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(todo);
+});
+
+// Delete a todo by ID
+app.delete('/todos/:id', async (req, res) => {
+    await Todo.findByIdAndDelete(req.params.id);
+    res.send('Todo deleted successfully');
+});
+
+// Step 7: Start the Server
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+
+
+
